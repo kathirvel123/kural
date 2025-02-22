@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/Pages/Mainpage.dart';
 import 'package:myapp/Pages/Loginpage.dart';
 import 'package:myapp/Pages/speechtotextpage.dart';
+import 'package:myapp/Pages/voicechatpage.dart';
 import 'package:myapp/Pages/welcomepage.dart';
 
 void main() {
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Speechtotextpage(),
+      home: Welcomepage(),
     );
   }
 }
