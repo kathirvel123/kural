@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:myapp/Pages/Homepage.dart';
+import 'package:myapp/Pages/Mainpage.dart';
 import 'package:myapp/Pages/signin.dart';
 import 'package:myapp/themes/theme.dart';
 import 'package:myapp/widgets/custom_scaffold.dart';
@@ -188,10 +188,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           onPressed: () {
                             if (_formSignupKey.currentState!.validate() &&
                                 agreePersonalData) {
-                             Navigator.pushReplacement(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const Homepage()),
+                                    builder: (context) => const Mainpage()),
                               );
                             } else if (!agreePersonalData) {
                               ScaffoldMessenger.of(context).showSnackBar(
