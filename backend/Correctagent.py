@@ -2,7 +2,7 @@ import ollama
 import json
 
 class GrammarCorrector:
-    def __init__(self, model="mistral"):
+    def __init__(self, model="llama3.2"):
         self.model = model
         self.system_prompt = (
             "You are an AI English mentor. Your task is to analyze a user's sentence and identify grammar mistakes. "
@@ -12,7 +12,6 @@ class GrammarCorrector:
 
     def analyze_conversation(self, conversation):
         results = []
-        
         for entry in conversation:
             if "user" in entry:  # Only process user messages
                 user_message = entry["user"]

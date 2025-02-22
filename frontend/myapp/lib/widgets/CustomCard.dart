@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/Pages/voicechatpage.dart';
 
 class Customcard extends StatefulWidget {
-  const Customcard({Key? key, required this.cardmodel}) : super(key: key);
+  const Customcard({super.key, required this.cardmodel});
 
   final cardmodel;
 
@@ -19,7 +19,7 @@ class _CustomcardState extends State<Customcard> {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => widget.cardmodel.page));
         },
-        child: Container(
+        child: SizedBox(
           width: double.infinity,
           height: 165,
           child: Card(

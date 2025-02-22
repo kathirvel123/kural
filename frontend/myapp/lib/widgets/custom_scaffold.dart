@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class CustomScaffold extends StatelessWidget {
   const CustomScaffold({super.key, this.child});
