@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/Pages/voicechatpage.dart';
 
 class Customcard extends StatefulWidget {
   const Customcard({Key? key, required this.cardmodel}) : super(key: key);
@@ -14,7 +15,10 @@ class _CustomcardState extends State<Customcard> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => widget.cardmodel.page));
+        },
         child: Container(
           width: double.infinity,
           height: 165,
