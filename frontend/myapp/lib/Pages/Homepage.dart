@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/Models/cardmodel.dart';
+import 'package:myapp/widgets/CustomCard.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -8,18 +10,23 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  List<Cardmodel> Cards = [
+    Cardmodel(name: "", icon: "person", col: "ff7096"),
+    Cardmodel(name: "AI VOICE CHAT", icon: "person", col: "ff7096"),
+    Cardmodel(name: "ROLE PLAY", icon: "person", col: "ff7096"),
+    Cardmodel(name: "STORY NARRATION", icon: "person", col: "ff7096"),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFa4fff3),
-      appBar: AppBar(
-        title: Text("Kural"),
-        backgroundColor: Color(0xFFcefff9),
-        actions: [
-          Builder(builder: (context)=>IconButton(onPressed: (){}, icon: Icon(Icons.person)))
-        ],
+      body: ListView.builder(
+        itemCount: Cards.length,
+        itemBuilder: (context, index) => Customcard(
+          cardmodel: Cards[index],
+          key: null,
+        ),
       ),
-
     );
   }
 }

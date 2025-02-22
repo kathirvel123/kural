@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:myapp/Pages/Homepage.dart';
+import 'package:myapp/Pages/Mainpage.dart';
 import 'package:myapp/Pages/signup.dart';
 import 'package:myapp/themes/theme.dart';
 import 'package:myapp/widgets/custom_scaffold.dart';
@@ -158,10 +158,11 @@ class _SignInScreenState extends State<SignInScreen> {
                           onPressed: () {
                             if (_formSignInKey.currentState!.validate() &&
                                 rememberPassword) {
-                              Navigator.pushReplacement(
+                              Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const Homepage()),
+                                    builder: (context) => const Mainpage()),
+                                (route) => false, // Remove all previous routes
                               );
                             } else if (!rememberPassword) {
                               ScaffoldMessenger.of(context).showSnackBar(
