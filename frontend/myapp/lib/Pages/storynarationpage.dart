@@ -10,6 +10,11 @@ class Storynarationpage extends StatefulWidget {
 class _StorynarationpageState extends State<Storynarationpage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFFFFB3C1),
+      ),
+      
+    );
   }
 }

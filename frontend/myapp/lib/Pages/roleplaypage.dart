@@ -10,6 +10,10 @@ class Roleplaypage extends StatefulWidget {
 class _RoleplaypageState extends State<Roleplaypage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFFFFB3C1),
+      ),
+    );
   }
 }
