@@ -37,6 +37,7 @@ dependencies:
   icons_plus: ^5.0.0
   google_fonts: ^6.2.1
   speech_to_text: ^7.0.0
+  record: ^5.2.1
 
 dev_dependencies:
   flutter_test:
