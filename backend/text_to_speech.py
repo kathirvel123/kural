@@ -14,4 +14,4 @@ def text_to_speech(text, output_file="output1.wav", voice="af_heart", speed=1):
     sf.write(output_file, final_audio, 24000)
     print(f"Audio saved as {output_file}")
 
-text_to_speech("Kural is an AI powered app which is full build with opensource models and tools.")
+text_to_speech("come with me")
