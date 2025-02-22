@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   icons_plus: ^5.0.0
   google_fonts: ^6.2.1
+  speech_to_text: ^7.0.0
 
 dev_dependencies:
   flutter_test:
