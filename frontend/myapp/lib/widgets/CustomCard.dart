@@ -20,23 +20,30 @@ class _CustomcardState extends State<Customcard> {
               MaterialPageRoute(builder: (context) => widget.cardmodel.page));
         },
         child: Container(
-          
           width: double.infinity,
           height: 165,
           child: Card(
             child: Stack(
-              alignment:Alignment.center ,
+              alignment: Alignment.center,
               children: [
-                Ink.image(image: AssetImage(widget.cardmodel.image),
-                height: 165,
-                fit: BoxFit.cover,
-                child: InkWell(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>widget.cardmodel.page
-                    ));
-                  },
-                ),),
-                Text(widget.cardmodel.name
+                Ink.image(
+                  image: AssetImage(widget.cardmodel.image),
+                  height: 165,
+                  fit: BoxFit.cover,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => widget.cardmodel.page));
+                    },
+                  ),
+                ),
+                Text(
+                  widget.cardmodel.name,
+                  style: TextStyle(
+                    fontSize: 25,
+                  ),
                 ),
               ],
             ),
