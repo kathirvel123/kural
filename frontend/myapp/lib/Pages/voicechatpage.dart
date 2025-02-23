@@ -3,6 +3,7 @@ import 'package:myapp/widgets/Ownmessagecard.dart';
 import 'package:myapp/widgets/Replymessagecard.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+
 class Voicechatpage extends StatefulWidget {
   const Voicechatpage({super.key});
 
@@ -11,9 +12,10 @@ class Voicechatpage extends StatefulWidget {
 }
 
 class _VoicechatpageState extends State<Voicechatpage> {
-   final SpeechToText _speechToText = SpeechToText();
+  final SpeechToText _speechToText = SpeechToText();
   bool _isListening = false;
   String _recognizedText = "Press and hold to speak...";
+  List<Widget> messages = [];
 
   @override
   void initState() {
@@ -36,24 +38,23 @@ class _VoicechatpageState extends State<Voicechatpage> {
     await _speechToText.stop();
     setState(() {
       _isListening = false;
-      _recognizedText = _speechToText.lastRecognizedWords.isNotEmpty
-          ? _speechToText.lastRecognizedWords
-          : "No speech detected.";
+      if (_speechToText.lastRecognizedWords.isNotEmpty) {
+        messages.add(Ownmessagecard());
+        messages.add(Replymessagecard());
+      }
     });
   }
 
   void _onSpeechResult(SpeechRecognitionResult result) {
     setState(() {
       _recognizedText = result.recognizedWords;
-    }
-    
-    );
+    });
     print(_recognizedText);
   }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
-      //for adding image so stack
       children: [
         Image.asset(
           "assets/images/chatimage.jpg",
@@ -73,65 +74,76 @@ class _VoicechatpageState extends State<Voicechatpage> {
             width: MediaQuery.of(context).size.width,
             child: WillPopScope(
               onWillPop: () async {
-  Navigator.pop(context);
-  return true;
-},
-         child: Stack(
+                Navigator.pop(context);
+                return true;
+              },
+              child: Stack(
                 children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height - 140,
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        Ownmessagecard(),
-                        Replymessagecard(),
-                        Ownmessagecard(),
-                        Replymessagecard(),
-                        Ownmessagecard(),
-                        Replymessagecard(),
-                        Ownmessagecard(),
-                        Replymessagecard(),
-                        Ownmessagecard(),
-                        Replymessagecard(),
-                        Ownmessagecard(),
-                        Replymessagecard(),
-                        Ownmessagecard(),
-                        Replymessagecard(),
-                      ],
-                    ),
-                  ),],
+                  messages.isEmpty
+                      ? Center(
+                          child: Container(
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.chat, size: 50, color: Colors.blue),
+                                SizedBox(height: 10),
+                                Text(
+                                  "Start a new conversation",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87),
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  "No messages yet. Hold the mic to start talking!",
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black54),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: messages.length,
+                          itemBuilder: (context, index) => messages[index],
+                        ),
+                ],
               ),
             ),
           ),
-          
           floatingActionButton: GestureDetector(
-        onLongPress: _startListening,
-        onLongPressUp: _stopListening,
-        child: Container(
-          padding: EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: _isListening ? Colors.green : Colors.red,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 10,
-                spreadRadius: 2,
-              )
-            ],
+            onLongPress: _startListening,
+            onLongPressUp: _stopListening,
+            child: Container(
+              padding: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _isListening ? Colors.green : Colors.red,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  )
+                ],
+              ),
+              child: Icon(
+                Icons.mic,
+                color: Colors.white,
+                size: 36,
+              ),
+            ),
           ),
-          child: Icon(
-            Icons.mic,
-            color: Colors.white,
-            size: 36,
-          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        ),    
-      ],                        
+      ],
     );
   }
 }
- 
-
