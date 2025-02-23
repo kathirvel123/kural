@@ -6,6 +6,7 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class VoiceChatPage extends StatefulWidget {
   const VoiceChatPage({super.key});
@@ -23,6 +24,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
   bool _isPlaying = false;
   String _recognizedText = "Press and hold to speak...";
   String? localAudioPath;
+  String userId = Uuid().v4(); // Generate unique user ID
 
   @override
   void initState() {
@@ -45,17 +47,27 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
 
     socket.onConnect((_) {
       setState(() => _isConnected = true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text("✅ Connected to Server"),
+            duration: Duration(seconds: 2)),
+      );
       print("✅ Connected to Flask-SocketIO");
     });
 
     socket.onDisconnect((_) {
       setState(() => _isConnected = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text("❌ Disconnected! Reconnecting..."),
+            duration: Duration(seconds: 2)),
+      );
       print("❌ Disconnected from server");
     });
 
     // Receive and Play Audio
     socket.on('audio_data', (data) async {
-      if (data != null && data['audio'] != null) {
+      if (data != null && data['audio'] != null && data['user_id'] == userId) {
         await saveAndPlayAudio(data['audio']);
       } else {
         print("⚠️ Invalid audio data received");
@@ -85,7 +97,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
         _recognizedText != "Press and hold to speak...") {
       // Emit recognized text to server
       if (_isConnected) {
-        socket.emit('send_text', {"text": _recognizedText});
+        socket.emit('send_text', {"text": _recognizedText, "user_id": userId});
         print("📤 Sent to server: $_recognizedText");
       } else {
         print("⚠️ Not connected to server!");
@@ -107,7 +119,7 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
   Future<void> saveAndPlayAudio(String base64Audio) async {
     try {
       final directory = await getApplicationDocumentsDirectory();
-      String filePath = '${directory.path}/received_audio.mp3';
+      String filePath = '${directory.path}/received_audio.wav';
 
       List<int> audioBytes = base64Decode(base64Audio);
       File file = File(filePath);
@@ -149,33 +161,53 @@ class _VoiceChatPageState extends State<VoiceChatPage> {
                   child: Text(
                     _recognizedText,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              if (!_isConnected)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "⚠️ Not connected to server. Reconnecting...",
+                    style: TextStyle(color: Colors.red, fontSize: 16),
+                  ),
+                ),
+            ],
+          ),
+          floatingActionButton: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (!_isConnected)
+                ElevatedButton(
+                  onPressed: _connectToSocket,
+                  child: Text("Reconnect"),
+                ),
+              GestureDetector(
+                onLongPress: _startListening, // Start listening
+                onLongPressUp:
+                    _stopListening, // Stop listening & send to server
+                child: Container(
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _isListening ? Colors.green : Colors.red,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                      )
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.mic,
+                    color: Colors.white,
+                    size: 36,
                   ),
                 ),
               ),
             ],
-          ),
-          floatingActionButton: GestureDetector(
-            onLongPress: _startListening, // Start listening
-            onLongPressUp: _stopListening, // Stop listening & send to server
-            child: Container(
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _isListening ? Colors.green : Colors.red,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10,
-                    spreadRadius: 2,
-                  )
-                ],
-              ),
-              child: Icon(
-                Icons.mic,
-                color: Colors.white,
-                size: 36,
-              ),
-            ),
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
