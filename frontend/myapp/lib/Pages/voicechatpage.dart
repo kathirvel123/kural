@@ -38,9 +38,10 @@ class _VoicechatpageState extends State<Voicechatpage> {
     await _speechToText.stop();
     setState(() {
       _isListening = false;
-      if (_speechToText.lastRecognizedWords.isNotEmpty) {
-        messages.add(Ownmessagecard());
-        messages.add(Replymessagecard());
+       if (_recognizedText.isNotEmpty &&
+          _recognizedText != "Press and hold to speak...") {
+        messages.add(Ownmessagecard(message: _recognizedText));
+        messages.add(Replymessagecard()); 
       }
     });
   }
