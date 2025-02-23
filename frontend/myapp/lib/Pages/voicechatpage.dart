@@ -1,126 +1,162 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/widgets/Ownmessagecard.dart';
-import 'package:myapp/widgets/Replymessagecard.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:path_provider/path_provider.dart';
 
-class Voicechatpage extends StatefulWidget {
-  const Voicechatpage({super.key});
+class VoiceChatPage extends StatefulWidget {
+  const VoiceChatPage({super.key});
 
   @override
-  State<Voicechatpage> createState() => _VoicechatpageState();
+  State<VoiceChatPage> createState() => _VoiceChatPageState();
 }
 
-class _VoicechatpageState extends State<Voicechatpage> {
+class _VoiceChatPageState extends State<VoiceChatPage> {
   final SpeechToText _speechToText = SpeechToText();
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  late IO.Socket socket;
   bool _isListening = false;
+  bool _isConnected = false;
+  bool _isPlaying = false;
   String _recognizedText = "Press and hold to speak...";
-  List<Widget> messages = [];
+  String? localAudioPath;
 
   @override
   void initState() {
     super.initState();
     _initializeSpeech();
+    _connectToSocket();
   }
 
+  // Initialize Speech Recognition
   void _initializeSpeech() async {
     await _speechToText.initialize();
   }
 
-  void _startListening() async {
-    await _speechToText.listen(onResult: _onSpeechResult);
-    setState(() {
-      _isListening = true;
+  // Connect to Flask-SocketIO Server
+  void _connectToSocket() {
+    socket = IO.io('http://172.16.3.50:5000', <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': true,
     });
-  }
 
-  void _stopListening() async {
-    await _speechToText.stop();
-    setState(() {
-      _isListening = false;
-       if (_recognizedText.isNotEmpty &&
-          _recognizedText != "Press and hold to speak...") {
-        messages.add(Ownmessagecard(message: _recognizedText));
-        messages.add(Replymessagecard()); 
+    socket.onConnect((_) {
+      setState(() => _isConnected = true);
+      print("✅ Connected to Flask-SocketIO");
+    });
+
+    socket.onDisconnect((_) {
+      setState(() => _isConnected = false);
+      print("❌ Disconnected from server");
+    });
+
+    // Receive and Play Audio
+    socket.on('audio_data', (data) async {
+      if (data != null && data['audio'] != null) {
+        await saveAndPlayAudio(data['audio']);
+      } else {
+        print("⚠️ Invalid audio data received");
       }
     });
   }
 
-  void _onSpeechResult(SpeechRecognitionResult result) {
+  // Start Speech Recognition
+  void _startListening() async {
+    if (_isPlaying) {
+      await _audioPlayer.stop();
+      setState(() => _isPlaying = false);
+    }
+    await _speechToText.listen(onResult: _onSpeechResult);
     setState(() {
-      _recognizedText = result.recognizedWords;
+      _isListening = true;
+      _recognizedText = "Listening...";
     });
-    print(_recognizedText);
+  }
+
+  // Stop Speech Recognition and Send to Flask
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() => _isListening = false);
+
+    if (_recognizedText.trim().isNotEmpty &&
+        _recognizedText != "Press and hold to speak...") {
+      // Emit recognized text to server
+      if (_isConnected) {
+        socket.emit('send_text', {"text": _recognizedText});
+        print("📤 Sent to server: $_recognizedText");
+      } else {
+        print("⚠️ Not connected to server!");
+      }
+    }
+  }
+
+  // Speech-to-Text Callback
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    if (result.recognizedWords.trim().isNotEmpty) {
+      setState(() {
+        _recognizedText = result.recognizedWords.trim();
+      });
+      print("🎙️ Recognized: $_recognizedText");
+    }
+  }
+
+  // Save and Play Received Audio
+  Future<void> saveAndPlayAudio(String base64Audio) async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      String filePath = '${directory.path}/received_audio.mp3';
+
+      List<int> audioBytes = base64Decode(base64Audio);
+      File file = File(filePath);
+      await file.writeAsBytes(audioBytes);
+
+      setState(() {
+        localAudioPath = filePath;
+        _isPlaying = true;
+      });
+
+      print("🔊 Playing received audio: $filePath");
+      await _audioPlayer.play(DeviceFileSource(filePath));
+    } catch (e) {
+      print("⚠️ Error processing audio: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    socket.disconnect();
+    _audioPlayer.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Image.asset(
-          "assets/images/chatimage.jpg",
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          fit: BoxFit.cover,
-        ),
         Scaffold(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
           appBar: AppBar(
-            titleSpacing: 0,
-            leadingWidth: 70,
+            title: Text("Voice Chat"),
             backgroundColor: Colors.redAccent,
           ),
-          body: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: WillPopScope(
-              onWillPop: () async {
-                Navigator.pop(context);
-                return true;
-              },
-              child: Stack(
-                children: [
-                  messages.isEmpty
-                      ? Center(
-                          child: Container(
-                            padding: EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.chat, size: 50, color: Colors.blue),
-                                SizedBox(height: 10),
-                                Text(
-                                  "Start a new conversation",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  "No messages yet. Hold the mic to start talking!",
-                                  style: TextStyle(
-                                      fontSize: 14, color: Colors.black54),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : ListView.builder(
-                          itemCount: messages.length,
-                          itemBuilder: (context, index) => messages[index],
-                        ),
-                ],
+          body: Column(
+            children: [
+              Expanded(
+                child: Center(
+                  child: Text(
+                    _recognizedText,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
           floatingActionButton: GestureDetector(
-            onLongPress: _startListening,
-            onLongPressUp: _stopListening,
+            onLongPress: _startListening, // Start listening
+            onLongPressUp: _stopListening, // Stop listening & send to server
             child: Container(
               padding: EdgeInsets.all(15),
               decoration: BoxDecoration(
