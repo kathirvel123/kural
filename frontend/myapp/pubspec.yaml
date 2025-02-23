@@ -39,6 +39,7 @@ dependencies:
   google_fonts: ^6.2.1
   speech_to_text: ^7.0.0
   record: ^5.2.1
+  fl_chart: ^0.70.2
 
 dev_dependencies:
   flutter_test:

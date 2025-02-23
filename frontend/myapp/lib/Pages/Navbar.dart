@@ -41,7 +41,7 @@ class Navbar extends StatelessWidget {
           Divider(),
           ListTile(
             leading: Icon(Icons.people),
-            title: Text("friends"),
+            title: Text("Donate"),
             onTap: () {},
           ),
           Divider(),

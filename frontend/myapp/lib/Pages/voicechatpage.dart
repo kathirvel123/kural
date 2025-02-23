@@ -15,6 +15,7 @@ class _VoicechatpageState extends State<Voicechatpage> {
   final SpeechToText _speechToText = SpeechToText();
   bool _isListening = false;
   String _recognizedText = "Press and hold to speak...";
+  List<Widget> messages = [];
 
   @override
   void initState() {
@@ -37,9 +38,10 @@ class _VoicechatpageState extends State<Voicechatpage> {
     await _speechToText.stop();
     setState(() {
       _isListening = false;
-      _recognizedText = _speechToText.lastRecognizedWords.isNotEmpty
-          ? _speechToText.lastRecognizedWords
-          : "No speech detected.";
+      if (_speechToText.lastRecognizedWords.isNotEmpty) {
+        messages.add(Ownmessagecard());
+        messages.add(Replymessagecard());
+      }
     });
     print(_recognizedText);
   }
@@ -47,14 +49,14 @@ class _VoicechatpageState extends State<Voicechatpage> {
   void _onSpeechResult(SpeechRecognitionResult result) {
     setState(() {
       _recognizedText = result.recognizedWords;
-    });
-    //print(_recognizedText);
+    }
+    
+    );
+    print(_recognizedText);
   }
-
   @override
   Widget build(BuildContext context) {
     return Stack(
-      //for adding image so stack
       children: [
         Image.asset(
           "assets/images/chatimage.jpg",
@@ -79,7 +81,7 @@ class _VoicechatpageState extends State<Voicechatpage> {
               },
               child: Stack(
                 children: [
-                  SizedBox(
+                  Container(
                     height: MediaQuery.of(context).size.height - 140,
                     child: ListView(
                       shrinkWrap: true,
@@ -100,8 +102,7 @@ class _VoicechatpageState extends State<Voicechatpage> {
                         Replymessagecard(),
                       ],
                     ),
-                  ),
-                ],
+                  ),],
               ),
             ),
           ),

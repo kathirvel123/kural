@@ -22,15 +22,29 @@ class _CustomcardState extends State<Customcard> {
           width: double.infinity,
           height: 165,
           child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 25, left: 10),
-                child: Text(
-                  widget.cardmodel.name,
-                  style: TextStyle(fontSize: 20),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Ink.image(
+                  image: AssetImage(widget.cardmodel.image),
+                  height: 165,
+                  fit: BoxFit.cover,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => widget.cardmodel.page));
+                    },
+                  ),
                 ),
-              ),
+                Text(
+                  widget.cardmodel.name,
+                  style: TextStyle(
+                    fontSize: 25,
+                  ),
+                ),
+              ],
             ),
           ),
         ));

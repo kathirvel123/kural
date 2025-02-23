@@ -45,6 +45,7 @@ class _SpeechtotextpageState extends State<Speechtotextpage> {
     setState(() {
       _recognizedText = result.recognizedWords;
     });
+    print(_recognizedText);
   }
 
   @override
