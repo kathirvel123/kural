@@ -1,0 +1,102 @@
+import 'package:flutter/material.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+
+class HRInterviewPage extends StatefulWidget {
+  @override
+  _HRInterviewPageState createState() => _HRInterviewPageState();
+}
+
+class _HRInterviewPageState extends State<HRInterviewPage> {
+  late IO.Socket socket;
+  String hrResponse = "HR: Tell me about yourself.";
+  List<String> conversation = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _connectToSocket();
+  }
+
+  void _connectToSocket() {
+    socket = IO.io('http://172.16.3.50:5000', <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': true,
+    });
+
+    socket.onConnect((_) {
+      print("✅ Connected to Flask-SocketIO");
+    });
+
+    socket.on('hr_response', (data) {
+      setState(() {
+        hrResponse = "HR: ${data['text']}";
+        conversation.add(hrResponse);
+      });
+    });
+
+    socket.on('evaluation', (data) {
+      setState(() {
+        conversation.add("\n📌 Final Evaluation:\n${data['report']}");
+      });
+    });
+
+    socket.onDisconnect((_) {
+      print("❌ Disconnected from server");
+    });
+  }
+
+  void sendMessage(String text) {
+    if (text.isNotEmpty) {
+      setState(() {
+        conversation.add("👤 You: $text");
+      });
+      socket.emit('send_text', {"text": text});
+    }
+  }
+
+  void endInterview() {
+    socket.emit('end_interview');
+  }
+
+  @override
+  void dispose() {
+    socket.disconnect();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("HR Interview Roleplay")),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: conversation.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(conversation[index], style: TextStyle(fontSize: 16)),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onSubmitted: sendMessage,
+              decoration: InputDecoration(
+                labelText: "Your Response",
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: endInterview,
+            child: Text("End Interview & Get Feedback"),
+          )
+        ],
+      ),
+    );
+  }
+}
