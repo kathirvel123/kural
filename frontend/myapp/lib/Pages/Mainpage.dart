@@ -14,7 +14,7 @@ class Mainpage extends StatefulWidget {
 class _MainpageState extends State<Mainpage> {
   int selecteditem = 0;
   var pagecontroller = PageController();
-  var _pages = [Homepage(), Streakcalender(), Progress()];
+  final _pages = [Homepage(), Streakcalender(), Progress()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,8 +36,8 @@ class _MainpageState extends State<Mainpage> {
             selecteditem = index;
           });
         },
-        children: _pages,
         controller: pagecontroller,
+        children: _pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
           items: <BottomNavigationBarItem>[
