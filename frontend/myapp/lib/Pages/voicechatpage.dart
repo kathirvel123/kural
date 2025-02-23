@@ -3,6 +3,7 @@ import 'package:myapp/widgets/Ownmessagecard.dart';
 import 'package:myapp/widgets/Replymessagecard.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+
 class Voicechatpage extends StatefulWidget {
   const Voicechatpage({super.key});
 
@@ -11,7 +12,7 @@ class Voicechatpage extends StatefulWidget {
 }
 
 class _VoicechatpageState extends State<Voicechatpage> {
-   final SpeechToText _speechToText = SpeechToText();
+  final SpeechToText _speechToText = SpeechToText();
   bool _isListening = false;
   String _recognizedText = "Press and hold to speak...";
 
@@ -40,16 +41,16 @@ class _VoicechatpageState extends State<Voicechatpage> {
           ? _speechToText.lastRecognizedWords
           : "No speech detected.";
     });
+    print(_recognizedText);
   }
 
   void _onSpeechResult(SpeechRecognitionResult result) {
     setState(() {
       _recognizedText = result.recognizedWords;
-    }
-    
-    );
-    print(_recognizedText);
+    });
+    //print(_recognizedText);
   }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -68,17 +69,17 @@ class _VoicechatpageState extends State<Voicechatpage> {
             leadingWidth: 70,
             backgroundColor: Colors.redAccent,
           ),
-          body: Container(
+          body: SizedBox(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: WillPopScope(
               onWillPop: () async {
-  Navigator.pop(context);
-  return true;
-},
-         child: Stack(
+                Navigator.pop(context);
+                return true;
+              },
+              child: Stack(
                 children: [
-                  Container(
+                  SizedBox(
                     height: MediaQuery.of(context).size.height - 140,
                     child: ListView(
                       shrinkWrap: true,
@@ -99,39 +100,38 @@ class _VoicechatpageState extends State<Voicechatpage> {
                         Replymessagecard(),
                       ],
                     ),
-                  ),],
+                  ),
+                ],
               ),
             ),
           ),
-          
           floatingActionButton: GestureDetector(
-        onLongPress: _startListening,
-        onLongPressUp: _stopListening,
-        child: Container(
-          padding: EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: _isListening ? Colors.green : Colors.red,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 10,
-                spreadRadius: 2,
-              )
-            ],
+            onLongPress: _startListening,
+            onLongPressUp: _stopListening,
+            child: Container(
+              padding: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _isListening ? Colors.green : Colors.red,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  )
+                ],
+              ),
+              child: Icon(
+                Icons.mic,
+                color: Colors.white,
+                size: 36,
+              ),
+            ),
           ),
-          child: Icon(
-            Icons.mic,
-            color: Colors.white,
-            size: 36,
-          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        ),    
-      ],                        
+      ],
     );
   }
 }
- 
-
