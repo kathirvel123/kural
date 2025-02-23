@@ -43,17 +43,15 @@ class _VoicechatpageState extends State<Voicechatpage> {
         messages.add(Replymessagecard());
       }
     });
-    print(_recognizedText);
   }
 
   void _onSpeechResult(SpeechRecognitionResult result) {
     setState(() {
       _recognizedText = result.recognizedWords;
-    }
-    
-    );
+    });
     print(_recognizedText);
   }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -71,7 +69,7 @@ class _VoicechatpageState extends State<Voicechatpage> {
             leadingWidth: 70,
             backgroundColor: Colors.redAccent,
           ),
-          body: SizedBox(
+          body: Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: WillPopScope(
@@ -81,28 +79,41 @@ class _VoicechatpageState extends State<Voicechatpage> {
               },
               child: Stack(
                 children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height - 140,
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        Ownmessagecard(),
-                        Replymessagecard(),
-                        Ownmessagecard(),
-                        Replymessagecard(),
-                        Ownmessagecard(),
-                        Replymessagecard(),
-                        Ownmessagecard(),
-                        Replymessagecard(),
-                        Ownmessagecard(),
-                        Replymessagecard(),
-                        Ownmessagecard(),
-                        Replymessagecard(),
-                        Ownmessagecard(),
-                        Replymessagecard(),
-                      ],
-                    ),
-                  ),],
+                  messages.isEmpty
+                      ? Center(
+                          child: Container(
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.chat, size: 50, color: Colors.blue),
+                                SizedBox(height: 10),
+                                Text(
+                                  "Start a new conversation",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87),
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  "No messages yet. Hold the mic to start talking!",
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.black54),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: messages.length,
+                          itemBuilder: (context, index) => messages[index],
+                        ),
+                ],
               ),
             ),
           ),
