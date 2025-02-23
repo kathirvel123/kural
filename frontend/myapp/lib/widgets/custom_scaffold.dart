@@ -6,7 +6,7 @@ class CustomScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false, 
+      onWillPop: () async => false,
       child: Scaffold(
         appBar: AppBar(
           iconTheme: const IconThemeData(color: Colors.white),
@@ -16,8 +16,8 @@ class CustomScaffold extends StatelessWidget {
         extendBodyBehindAppBar: true,
         body: Stack(
           children: [
-            Image.asset( 'assets/images/pixelbg.jpg'
-             ,
+            Image.asset(
+              'assets/images/pixelbg.jpg',
               fit: BoxFit.cover,
               width: double.infinity,
               height: double.infinity,

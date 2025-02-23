@@ -41,6 +41,7 @@ class _CustomcardState extends State<Customcard> {
                 Text(
                   widget.cardmodel.name,
                   style: TextStyle(
+                    color: Color(0xFFFFFFFF),
                     fontSize: 25,
                   ),
                 ),
