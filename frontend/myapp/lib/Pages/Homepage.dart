@@ -14,20 +14,29 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   List<Cardmodel> Cards = [
-    Cardmodel(name: "", icon: "person", col: "ff7096",image:  "assets/images/img_backtoschool.jpg", page: Roleplaypage()),
+    Cardmodel(
+        name: "",
+        icon: "person",
+        col: "ff7096",
+        image: "assets/images/img_backtoschool.jpg",
+        page: Roleplaypage()),
     Cardmodel(
         name: "AI VOICE CHAT",
         icon: "person",
         col: "ff7096",
         image: "assets/images/image1.jpg",
-        page: Voicechatpage()),
+        page: VoiceChatPage()),
     Cardmodel(
-        name: "ROLE PLAY", icon: "person", col: "ff7096", page: Roleplaypage(),image: "assets/images/image1.jpg"),
+        name: "ROLE PLAY",
+        icon: "person",
+        col: "ff7096",
+        page: Roleplaypage(),
+        image: "assets/images/image1.jpg"),
     Cardmodel(
         name: "STORY NARRATION",
         icon: "person",
         col: "ff7096",
-         image: "assets/images/image1.jpg",
+        image: "assets/images/image1.jpg",
         page: Storynarationpage()),
   ];
 
