@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/Pages/Homepage.dart';
 import 'package:myapp/Pages/Navbar.dart';
-import 'package:myapp/Pages/Streakcalender.dart';
+import 'package:myapp/Pages/dailyrecappage.dart';
 import 'package:myapp/Pages/progress.dart';
 
 class Mainpage extends StatefulWidget {
@@ -14,7 +14,7 @@ class Mainpage extends StatefulWidget {
 class _MainpageState extends State<Mainpage> {
   int selecteditem = 0;
   var pagecontroller = PageController();
-  final _pages = [Homepage(), Streakcalender(), Progress()];
+  final _pages = [Homepage(), DailyRecapPage(), Progress()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
