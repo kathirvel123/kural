@@ -14,7 +14,7 @@ This AI-powered open-source system provides real-time feedback on fluency, appro
 7. [Resources](#resources)
 # DEMO
 
-## [VIDEO] ()
+## [VIDEO] (https://youtu.be/_lqyEY9H1cY)
 
 
 
